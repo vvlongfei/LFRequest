@@ -2,6 +2,7 @@
 .DS_Store
 
 # Xcode
+Example/Pods
 build/
 *.pbxuser
 !default.pbxuser
@@ -17,7 +18,7 @@ profile
 *.moved-aside
 DerivedData
 *.hmap
-*.ipa
+*.gpa
 
 # Bundler
 .bundle
