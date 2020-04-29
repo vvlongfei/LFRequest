@@ -17,12 +17,12 @@ LFRequest is available through [CocoaPods](https://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'LFRequest'
+
 ```
 
 ## Author
 
-王龙飞, wanglongfei001@ke.com
+feiyu vvlongfei@163.com
 
 ## License
 
