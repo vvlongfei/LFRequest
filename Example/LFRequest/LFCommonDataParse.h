@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface LFCommonDataParse : NSObject<LFDataParseDeleate>
+@interface LFCommonDataParse : NSObject<LFDataParseDelegate>
 
 @end
 

@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, nonatomic, strong) NSMutableDictionary *header;    ///< 请求头
 
 /// 数据解析器，默认为nil；解析器优先级dataParse > LFNetworkManager.config.commonDataParse > YYModel
-@property (nonatomic, strong) id<LFDataParseDeleate> dataParse;
+@property (nonatomic, strong) id<LFDataParseDelegate> dataParse;
 
 /// 请求序列格式，默认LFRequestSerializerTypeHttp。post情况下如果要求以body传递参数，则该属性需要设置为LFRequestSerializerTypeJson
 @property (nonatomic, assign) LFRequestSerializerType serializerType;

@@ -21,7 +21,7 @@ typedef NS_ENUM(NSUInteger, LFRequestSerializerType) {
 };
 
 /// 数据解析代理，分别可配置在通用配置、单独请求配置中
-@protocol LFDataParseDeleate <NSObject>
+@protocol LFDataParseDelegate <NSObject>
 - (id)parseDataFromJson:(NSDictionary *)jsonDict toClass:(Class)toClass error:(NSError **)error;
 @end
 

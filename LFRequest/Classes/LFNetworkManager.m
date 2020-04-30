@@ -219,7 +219,7 @@ static dispatch_queue_t url_session_completion_queue() {
     if (!request.rspClass) {
         return jsonData;
     }
-    id<LFDataParseDeleate> dataParse = request.dataParse ?: self.config.commonDataParse;
+    id<LFDataParseDelegate> dataParse = request.dataParse ?: self.config.commonDataParse;
     if ([dataParse respondsToSelector:@selector(parseDataFromJson:toClass:error:)]) {
         return [dataParse parseDataFromJson:jsonData toClass:request.rspClass error:error];
     } else {

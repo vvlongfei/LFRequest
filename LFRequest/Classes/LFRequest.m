@@ -96,11 +96,11 @@
                header:(NSDictionary *)header
               success:(LFNetSuccBlock)success
               failure:(LFNetFailBlock)failure {
-    if (self.params != params) {
-        [self.params addEntriesFromDictionary:params];
+    if (params && self.params != params) {
+        self.params = [NSMutableDictionary dictionaryWithDictionary:params];
     }
-    if (self.header != header) {
-        [self.header addEntriesFromDictionary:header];
+    if (header && self.header != header) {
+        self.header = [NSMutableDictionary dictionaryWithDictionary:header];
     }
     self.asynBack = NO;
     self.dataTask = [[LFNetworkManager manager] sendRequest:self succ:success fail:failure];
@@ -122,11 +122,11 @@
                        header:(NSDictionary *)header
                       success:(LFNetSuccBlock)success
                       failure:(LFNetFailBlock)failure {
-    if (self.params != params) {
-        [self.params addEntriesFromDictionary:params];
+    if (params && self.params != params) {
+        self.params = [NSMutableDictionary dictionaryWithDictionary:params];
     }
-    if (self.header != header) {
-        [self.header addEntriesFromDictionary:header];
+    if (header && self.header != header) {
+        self.header = [NSMutableDictionary dictionaryWithDictionary:header];
     }
     self.asynBack = YES;
     self.dataTask = [[LFNetworkManager manager] sendRequest:self succ:success fail:failure];

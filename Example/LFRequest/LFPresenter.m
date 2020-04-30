@@ -48,6 +48,8 @@
     if (!_homeRequest) {
         _homeRequest = [LFRequest PostWithUri:@"/home" rspClass:LFHomeInfo.class];
         _homeRequest.dataParse = self;
+        _homeRequest.serializerType = LFRequestSerializerTypeJson;
+        _homeRequest.requestTimeout = 10;
     }
     return _homeRequest;
 }
