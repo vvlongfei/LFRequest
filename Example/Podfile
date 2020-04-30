@@ -6,7 +6,11 @@ platform :ios, '9.0'
 target 'LFRequest_Example' do
   pod 'LFRequest', :path => '../'
   
+  # 库依赖
   pod 'AFNetworking'
   pod 'YYModel'
   pod 'YYCache'
+  
+  # demo依赖
+  pod 'Masonry'
 end

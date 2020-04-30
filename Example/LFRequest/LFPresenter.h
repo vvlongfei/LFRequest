@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import <LFRequest/LFRequest.h>
+#import "LFUserInfo.h"
+#import <YYModel/YYModel.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -7,12 +7,26 @@
 //
 
 #import "LFAppDelegate.h"
+#import "LFNetworkManager.h"
+#import "LFCommonDataParse.h"
 
 @implementation LFAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    LFNetworkConfig *config = [LFNetworkConfig new];
+    config.domainBlock = ^NSString * _Nonnull{
+        return @"http://mock.studyinghome.com/mock/5eaa69714006b044ae246153/request";
+    };
+    config.commonHeaderBlock = ^NSDictionary * _Nonnull{
+        return @{
+            @"commonHeader":@"commonHeader",
+            @"userToken":@"xxxxxxxxxxxxxxxxxxx",
+        };
+    };
+    config.commonDataParse = [LFCommonDataParse new];
+    [LFNetworkManager manager].config = config;
     return YES;
 }
 
