@@ -54,22 +54,29 @@
     return [self GetWithDomain:nil uri:uri rspClass:rspClass needCache:NO];
 }
 
-+ (instancetype)PostWithDomain:(nullable NSString *)domain
++ (instancetype)PostWithDomain:(NSString *)domain
                            uri:(NSString *)uri
-                      rspClass:(nullable Class)rspClass {
+                      rspClass:(Class)rspClass
+                     needCache:(BOOL)needCache {
     NSAssert(uri.length > 0, @"uri(path) is empty");
     LFRequest *newRequest = [LFRequest new];
     newRequest.method = LFRequestMethodPost;
     newRequest.domain = domain;
     newRequest.uri = uri;
     newRequest.rspClass = rspClass;
-    newRequest.needCache = NO;
+    newRequest.needCache = needCache;
     return newRequest;
 }
 
 + (instancetype)PostWithUri:(NSString *)uri
+                   rspClass:(Class)rspClass
+                  needCache:(BOOL)needCache {
+    return [self PostWithDomain:nil uri:uri rspClass:rspClass needCache:NO];
+}
+
++ (instancetype)PostWithUri:(NSString *)uri
                    rspClass:(nullable Class)rspClass {
-    return [self PostWithDomain:nil uri:uri rspClass:rspClass];
+    return [self PostWithDomain:nil uri:uri rspClass:rspClass needCache:NO];
 }
 
 - (instancetype)init {
@@ -77,6 +84,7 @@
     if (self) {
         self.serializerType = LFRequestSerializerTypeHttp;
         self.requestTimeout = 10;
+        self.tag = 0;
     }
     return self;
 }

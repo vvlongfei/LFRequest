@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class LFRequest;
-@protocol LFDataParseDelegate;
+@protocol LFRequestDelegate;
 
 @interface LFNetworkConfig : NSObject
 
@@ -18,11 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *(^domainBlock)(void);
 /// 公共请求头block
 @property (nonatomic, copy) NSDictionary *(^commonHeaderBlock)(void);
-/// 请求失败码拦截
-@property (nonatomic, copy) BOOL (^errorIntercept)(LFRequest *request, NSError *error);
-
-/// response通用解析，默认为YYModel对response进行解析。注意，强引用
-@property (nonatomic, strong) id<LFDataParseDelegate> commonDataParse;
+/// 包含有数据解析、请求拦截、错误码拦截
+@property (nonatomic, strong) id<LFRequestDelegate> commonRequestDelegate;
 
 /// 从domainBlock获取默认域名
 - (NSString *)obtainDomain;

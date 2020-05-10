@@ -26,8 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, nonatomic, strong) NSMutableDictionary *params;    ///< 请求参数
 @property (readonly, nonatomic, strong) NSMutableDictionary *header;    ///< 请求头
 
-/// 数据解析器，默认为nil；解析器优先级dataParse > LFNetworkManager.config.commonDataParse > YYModel
-@property (nonatomic, strong) id<LFDataParseDelegate> dataParse;
+/// 可以配置：请求拦截（也可以在请求前做配置工作）、数据解析
+@property (nonatomic, weak) id<LFRequestDelegate> delegate;
 
 /// 请求序列格式，默认LFRequestSerializerTypeHttp。post情况下如果要求以body传递参数，则该属性需要设置为LFRequestSerializerTypeJson
 @property (nonatomic, assign) LFRequestSerializerType serializerType;
@@ -35,6 +35,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// 超时时间，默认10秒
 @property (nonatomic, assign) NSTimeInterval requestTimeout;
 
+#pragma mark - 辅助变量
+/// 辅助对象，具体功能由业务方定，可以 传递数据 给 拦截器（interceptor） 或者 数据解析（dataParse），也可以传递给错误码拦截中
+@property (nonatomic, strong) id object;
+/// 辅助标识位，默认值为0，功能与object相似
+@property (nonatomic, assign) NSInteger tag;
 
 + (instancetype)GetWithDomain:(nullable NSString *)domain
                           uri:(NSString *)uri
@@ -50,7 +55,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)PostWithDomain:(nullable NSString *)domain
                            uri:(NSString *)uri
-                      rspClass:(nullable Class)rspClass;
+                      rspClass:(nullable Class)rspClass
+                     needCache:(BOOL)needCache;
+
++ (instancetype)PostWithUri:(NSString *)uri
+                   rspClass:(nullable Class)rspClass
+                  needCache:(BOOL)needCache;
 
 + (instancetype)PostWithUri:(NSString *)uri
                    rspClass:(nullable Class)rspClass;

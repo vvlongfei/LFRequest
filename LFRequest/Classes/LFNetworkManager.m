@@ -66,7 +66,7 @@ static dispatch_queue_t url_session_completion_queue() {
 
 - (AFHTTPSessionManager *)sessionManager {
     if (!_sessionManager) {
-         NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
         _sessionManager = [[AFHTTPSessionManager alloc] initWithSessionConfiguration:config];
         _sessionManager.completionQueue = url_session_completion_queue();
         _sessionManager.operationQueue.maxConcurrentOperationCount = 4;
@@ -77,6 +77,12 @@ static dispatch_queue_t url_session_completion_queue() {
 
 - (NSURLSessionDataTask *)sendRequest:(LFRequest *)request succ:(LFNetSuccBlock)succ fail:(LFNetFailBlock)fail {
     @weakify(self);
+    
+    if ([self interceptorForRequest:request fail:fail]) {
+        // 请求被拦截，取消网络请求
+        return nil;
+    }
+    
     // 创建请求url，如果域名为空，则debug下崩溃
     NSString *urlString = request.urlString;
     // 重新生成请求序列，保证公共请求头部分为最新，并设置超时时间
@@ -132,6 +138,21 @@ static dispatch_queue_t url_session_completion_queue() {
     return task;
 }
 
+- (BOOL)interceptorForRequest:(LFRequest *)request fail:(LFNetFailBlock)fail {
+    NSError *error = nil;
+    if ([request.delegate respondsToSelector:@selector(request:interceptor:)] &&
+        [request.delegate request:request interceptor:&error]) {
+        if (fail) fail(error);
+        return YES;
+    }
+    if ([self.config.commonRequestDelegate respondsToSelector:@selector(request:interceptor:)] &&
+        [self.config.commonRequestDelegate request:request interceptor:&error]) {
+        if (fail) fail(error);
+        return YES;
+    }
+    return NO;
+}
+
 - (void)backSuccForRequest:(LFRequest *)request
                     result:(id)result
                   jsonDict:(NSDictionary *)jsonDict
@@ -153,8 +174,15 @@ static dispatch_queue_t url_session_completion_queue() {
 
 - (void)backFailForRequest:(LFRequest *)request error:(NSError *)error fail:(LFNetFailBlock)fail {
     
-    if (self.config.errorIntercept && self.config.errorIntercept(request, error)) {
-        // 错误信息被拦截
+    if ([self.config.commonRequestDelegate respondsToSelector:@selector(request:errorIntercept:)] &&
+        [self.config.commonRequestDelegate request:request errorIntercept:error]) {
+        // 公共错误码拦截
+        return;
+    }
+    
+    if ([request.delegate respondsToSelector:@selector(request:errorIntercept:)] &&
+        [request.delegate request:request errorIntercept:error]) {
+        // 本身错误码拦截
         return;
     }
     
@@ -219,9 +247,10 @@ static dispatch_queue_t url_session_completion_queue() {
     if (!request.rspClass) {
         return jsonData;
     }
-    id<LFDataParseDelegate> dataParse = request.dataParse ?: self.config.commonDataParse;
-    if ([dataParse respondsToSelector:@selector(parseDataFromJson:toClass:error:)]) {
-        return [dataParse parseDataFromJson:jsonData toClass:request.rspClass error:error];
+    if ([request.delegate respondsToSelector:@selector(request:parseData:error:)]) {
+        return [request.delegate request:request parseData:jsonData error:error];
+    } else if ([self.config.commonRequestDelegate respondsToSelector:@selector(request:parseData:error:)]) {
+        return [self.config.commonRequestDelegate request:request parseData:jsonData error:error];
     } else {
         return [request.rspClass yy_modelWithJSON:jsonData];
     }
