@@ -174,15 +174,15 @@ static dispatch_queue_t url_session_completion_queue() {
 
 - (void)backFailForRequest:(LFRequest *)request error:(NSError *)error fail:(LFNetFailBlock)fail {
     
-    if ([self.config.commonRequestDelegate respondsToSelector:@selector(request:errorIntercept:)] &&
-        [self.config.commonRequestDelegate request:request errorIntercept:error]) {
-        // 公共错误码拦截
-        return;
-    }
-    
     if ([request.delegate respondsToSelector:@selector(request:errorIntercept:)] &&
         [request.delegate request:request errorIntercept:error]) {
         // 本身错误码拦截
+        return;
+    }
+    
+    if ([self.config.commonRequestDelegate respondsToSelector:@selector(request:errorIntercept:)] &&
+        [self.config.commonRequestDelegate request:request errorIntercept:error]) {
+        // 公共错误码拦截
         return;
     }
     
