@@ -10,23 +10,6 @@
 #import <YYCache/YYCache.h>
 #import <YYModel/YYModel.h>
 
-#define weakify(VAR) \
-rac_keywordify \
-__weak __typeof__(VAR) VAR ## _weak_ = (VAR);
-
-#define strongify(VAR) \
-rac_keywordify \
-_Pragma("clang diagnostic push") \
-_Pragma("clang diagnostic ignored \"-Wshadow\"") \
-__strong __typeof__(VAR) VAR = VAR ## _weak_; \
-_Pragma("clang diagnostic pop")
-
-#if DEBUG
-#define rac_keywordify autoreleasepool {}
-#else
-#define rac_keywordify try {} @catch (...) {}
-#endif
-
 static dispatch_queue_t url_session_completion_queue() {
     static dispatch_queue_t af_url_session_completion_queue;
     static dispatch_once_t onceToken;
