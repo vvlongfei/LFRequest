@@ -15,7 +15,23 @@
 @implementation LFCodeModel
 @end
 
+@interface LFPresenter ()
+@property (nonatomic, copy) LFRequestParseBlock dataParse; ///< 数据解析器
+@end
+
 @implementation LFPresenter
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        __weak __typeof(self) ws = self;
+        _dataParse = ^id(LFRequest *request, NSDictionary *jsonDict, NSError *__autoreleasing *error) {
+            __strong __typeof(ws) self = ws;
+            return [self parseDataFromJson:jsonDict toClass:request.rspClass error:error];
+        };
+    }
+    return self;
+}
 
 - (id)parseDataFromJson:(NSDictionary *)jsonDict toClass:(Class)toClass error:(NSError *__autoreleasing *)error {
     if (![jsonDict isKindOfClass:NSDictionary.class]) {
@@ -39,7 +55,7 @@
 - (LFRequest *)userInfoRequest {
     if (!_userInfoRequest) {
         _userInfoRequest = [LFRequest GetWithUri:@"/userInfo" rspClass:LFUserInfo.class];
-        _userInfoRequest.dataParse = self;
+        _userInfoRequest.dataParse = self.dataParse;
     }
     return _userInfoRequest;
 }
@@ -47,7 +63,7 @@
 - (LFRequest *)homeRequest {
     if (!_homeRequest) {
         _homeRequest = [LFRequest PostWithUri:@"/home" rspClass:LFHomeInfo.class];
-        _homeRequest.dataParse = self;
+        _homeRequest.dataParse = self.dataParse;
         _homeRequest.serializerType = LFRequestSerializerTypeJson;
         _homeRequest.requestTimeout = 10;
     }

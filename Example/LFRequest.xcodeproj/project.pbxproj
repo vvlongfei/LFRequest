@@ -22,7 +22,6 @@
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 		90AF8A337F317EE1D56626E3 /* Pods_LFRequest_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEC97D0E6CAF3EDA2541E5F9 /* Pods_LFRequest_Example.framework */; };
 		E861168E245A970100C02C90 /* LFUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = E861168D245A970100C02C90 /* LFUserInfo.m */; };
-		E8611691245A9FD000C02C90 /* LFCommonDataParse.m in Sources */ = {isa = PBXBuildFile; fileRef = E8611690245A9FD000C02C90 /* LFCommonDataParse.m */; };
 		E88FAD502459ED58001CC133 /* LFPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = E88FAD4F2459ED58001CC133 /* LFPresenter.m */; };
 /* End PBXBuildFile section */
 
@@ -61,8 +60,6 @@
 		AE5DE5A33B66C33E5F5B1D3F /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		E861168C245A970100C02C90 /* LFUserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LFUserInfo.h; sourceTree = "<group>"; };
 		E861168D245A970100C02C90 /* LFUserInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LFUserInfo.m; sourceTree = "<group>"; };
-		E861168F245A9FD000C02C90 /* LFCommonDataParse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LFCommonDataParse.h; sourceTree = "<group>"; };
-		E8611690245A9FD000C02C90 /* LFCommonDataParse.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LFCommonDataParse.m; sourceTree = "<group>"; };
 		E88FAD4E2459ED58001CC133 /* LFPresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LFPresenter.h; sourceTree = "<group>"; };
 		E88FAD4F2459ED58001CC133 /* LFPresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LFPresenter.m; sourceTree = "<group>"; };
 		FEC97D0E6CAF3EDA2541E5F9 /* Pods_LFRequest_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LFRequest_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -179,8 +176,6 @@
 				E88FAD4F2459ED58001CC133 /* LFPresenter.m */,
 				E861168C245A970100C02C90 /* LFUserInfo.h */,
 				E861168D245A970100C02C90 /* LFUserInfo.m */,
-				E861168F245A9FD000C02C90 /* LFCommonDataParse.h */,
-				E8611690245A9FD000C02C90 /* LFCommonDataParse.m */,
 			);
 			name = LFRequestTest;
 			sourceTree = "<group>";
@@ -337,7 +332,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E8611691245A9FD000C02C90 /* LFCommonDataParse.m in Sources */,
 				6003F59E195388D20070C39A /* LFAppDelegate.m in Sources */,
 				E861168E245A970100C02C90 /* LFUserInfo.m in Sources */,
 				6003F5A7195388D20070C39A /* LFViewController.m in Sources */,

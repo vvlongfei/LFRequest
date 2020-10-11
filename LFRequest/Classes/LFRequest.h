@@ -26,8 +26,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, nonatomic, strong) NSMutableDictionary *params;    ///< 请求参数
 @property (readonly, nonatomic, strong) NSMutableDictionary *header;    ///< 请求头
 
-/// 可以配置：请求拦截（也可以在请求前做配置工作）、数据解析
-@property (nonatomic, weak) id<LFRequestDelegate> delegate;
+@property (nonatomic, copy) LFRequestParseBlock dataParse;                              ///< 数据解析，可选项
+@property (nonatomic, copy) LFRequestErrorInterceptBlock errorInterceptor;              ///< 错误拦截
+@property (readonly, nonatomic, copy) NSArray<LFRequestInterceptorBlock> *interceptors; ///< 拦截器
 
 /// 请求序列格式，默认LFRequestSerializerTypeHttp。post情况下如果要求以body传递参数，则该属性需要设置为LFRequestSerializerTypeJson
 @property (nonatomic, assign) LFRequestSerializerType serializerType;
@@ -64,6 +65,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)PostWithUri:(NSString *)uri
                    rspClass:(nullable Class)rspClass;
+
+- (void)addInterceptor:(LFRequestInterceptorBlock)interceptorBlock;
 
 #pragma mark < 主线程返回数据 >
 - (void)requestSuccess:(nullable LFNetSuccBlock)success

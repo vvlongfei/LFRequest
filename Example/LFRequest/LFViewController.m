@@ -59,7 +59,7 @@
         @"selfHeader":@"www.feiyu.com"
     } success:^(id rspModel, NSDictionary *rspJson) {
         self.displayResultView.text = [NSString stringWithFormat:@"%@", rspModel];
-    } failure:^(NSError *error) {
+    } failure:^(NSError *error, id rspModel) {
         self.displayResultView.text = [NSString stringWithFormat:@"%@", error];
     }];
 }
@@ -71,7 +71,7 @@
         @"selfHeader":@"www.feiyu.com"
     } success:^(id rspModel, NSDictionary *rspJson) {
         self.displayResultView.text = [NSString stringWithFormat:@"%@", rspModel];
-    } failure:^(NSError *error) {
+    } failure:^(NSError *error, id rspModel) {
         self.displayResultView.text = [NSString stringWithFormat:@"%@", error];
     }];
 }
@@ -83,7 +83,7 @@
         @"selfHeader":@"www.feiyu.com"
     } success:^(id rspModel, NSDictionary *rspJson) {
         self.displayResultView.text = [NSString stringWithFormat:@"%@", rspModel];
-    } failure:^(NSError *error) {
+    } failure:^(NSError *error, id rspModel) {
         self.displayResultView.text = [NSString stringWithFormat:@"%@", error];
     }];
 }

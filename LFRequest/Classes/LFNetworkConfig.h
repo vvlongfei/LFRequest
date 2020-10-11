@@ -5,27 +5,26 @@
 //  Created by feiyu on 2020/4/29.
 //
 
-#import <Foundation/Foundation.h>
+#import "LFRequestCommonType.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class LFRequest;
-@protocol LFRequestDelegate;
 
 @interface LFNetworkConfig : NSObject
 
-/// 默认域名block
-@property (nonatomic, copy) NSString *(^domainBlock)(void);
-/// 公共请求头block
-@property (nonatomic, copy) NSDictionary *(^commonHeaderBlock)(void);
-/// 包含有数据解析、请求拦截、错误码拦截
-@property (nonatomic, strong) id<LFRequestDelegate> commonRequestDelegate;
+@property (nonatomic, copy) NSString *(^domainBlock)(LFRequest *request);           ///< 默认域名block
+@property (nonatomic, copy) NSDictionary *(^commonHeaderBlock)(LFRequest *request); ///< 公共请求头block
+
+@property (nonatomic, copy) LFRequestInterceptorBlock interceptor;         ///< 拦截器
+@property (nonatomic, copy) LFRequestParseBlock dataParse;                  ///< 数据解析
+@property (nonatomic, copy) LFRequestErrorInterceptBlock errorInterceptor;  ///< 错误拦截
 
 /// 从domainBlock获取默认域名
-- (NSString *)obtainDomain;
+- (NSString *)obtainDomainWithRequest:(LFRequest *)request;
 
 /// 从commonHeaderBlock获取公共请求头
-- (NSDictionary *)obtainHeader;
+- (NSDictionary *)obtainHeaderWithRequest:(LFRequest *)request;
 
 @end
 

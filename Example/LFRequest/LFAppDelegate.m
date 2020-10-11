@@ -8,7 +8,14 @@
 
 #import "LFAppDelegate.h"
 #import "LFNetworkManager.h"
-#import "LFCommonDataParse.h"
+#import <YYModel/YYModel.h>
+
+@interface LFCommonCodeModel : NSObject
+@property (nonatomic, assign) NSInteger errNo;
+@property (nonatomic, copy) NSString *error;
+@end
+@implementation LFCommonCodeModel
+@end
 
 @implementation LFAppDelegate
 
@@ -16,16 +23,33 @@
 {
     // Override point for customization after application launch.
     LFNetworkConfig *config = [LFNetworkConfig new];
-    config.domainBlock = ^NSString * _Nonnull{
+    config.domainBlock = ^NSString * _Nonnull(LFRequest * _Nonnull request) {
         return @"http://mock.studyinghome.com/mock/5eaa69714006b044ae246153/request";
     };
-    config.commonHeaderBlock = ^NSDictionary * _Nonnull{
+    config.commonHeaderBlock = ^NSDictionary * _Nonnull(LFRequest * _Nonnull request) {
         return @{
             @"commonHeader":@"commonHeader",
             @"userToken":@"xxxxxxxxxxxxxxxxxxx",
         };
     };
-    config.commonDataParse = [LFCommonDataParse new];
+    config.dataParse = ^id(LFRequest *request, NSDictionary *jsonDict, NSError *__autoreleasing *error) {
+        if (![jsonDict isKindOfClass:NSDictionary.class]) {
+            *error = [NSError errorWithDomain:@"数据不合法" code:-1 userInfo:nil];
+            return nil;
+        }
+        LFCommonCodeModel *codeModel = [LFCommonCodeModel yy_modelWithJSON:jsonDict];
+        if (codeModel.errNo == 0) {
+            NSDictionary *data = jsonDict[@"data"];
+            if ([data isKindOfClass:NSDictionary.class]) {
+                return [request.rspClass yy_modelWithJSON:data];
+            } else {
+                return nil;
+            }
+        } else {
+            *error = [NSError errorWithDomain:codeModel.error?:@"" code:codeModel.errNo userInfo:nil];
+            return nil;
+        }
+    };
     [LFNetworkManager manager].config = config;
     return YES;
 }

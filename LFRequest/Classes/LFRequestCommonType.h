@@ -22,20 +22,16 @@ typedef NS_ENUM(NSUInteger, LFRequestSerializerType) {
     LFRequestSerializerTypeJson,
 };
 
-@protocol LFRequestDelegate <NSObject>
-@optional
+/// 请求拦截
+typedef BOOL(^LFRequestInterceptorBlock)(LFRequest *request, NSError *__autoreleasing *error);
 /// 数据解析
-- (id)request:(LFRequest *)request parseData:(NSDictionary *)jsonDict error:(NSError **)error;
-/// 请求拦截，发送请求前进行拦截，也可用于请求前的处理工作，比如添加固有参数或请求头
-- (BOOL)request:(LFRequest *)request interceptor:(NSError **)error;
-
+typedef id(^LFRequestParseBlock)(LFRequest *request, NSDictionary *jsonDict, NSError *__autoreleasing *error);
 /// 错误码拦截
-- (BOOL)request:(LFRequest *)request errorIntercept:(NSError *)error;
-@end
+typedef BOOL(^LFRequestErrorInterceptBlock)(LFRequest *request, NSError *error);
 
 /// 请求成功block
 typedef void(^LFNetSuccBlock)(id rspModel, NSDictionary *rspJson);
-/// 失败block
-typedef void(^LFNetFailBlock)(NSError *error);
+/// 失败block， rspModel可能是model，可能是dict
+typedef void(^LFNetFailBlock)(NSError *error, id rspModel);
 
 #endif /* LFRequestCommonType_h */

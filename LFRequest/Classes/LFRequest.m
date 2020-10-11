@@ -21,6 +21,7 @@
 @property (readwrite, nonatomic, strong) NSMutableDictionary *params;
 @property (readwrite, nonatomic, strong) NSMutableDictionary *header;
 @property (readwrite, nonatomic, assign) BOOL asynBack;
+@property (readwrite, nonatomic, copy) NSMutableArray *customInterceptors;    ///< 拦截器
 
 @property (nonatomic, strong) NSURLSessionDataTask *dataTask;
 
@@ -87,6 +88,14 @@
         self.tag = 0;
     }
     return self;
+}
+
+- (void)addInterceptor:(LFRequestInterceptorBlock)interceptorBlock {
+    !interceptorBlock ?: [self.customInterceptors addObject:interceptorBlock];
+}
+
+- (NSArray *)interceptors {
+    return [self.customInterceptors copy];
 }
 
 - (void)requestSuccess:(LFNetSuccBlock)success
@@ -179,11 +188,18 @@
     return _params;
 }
 
+-  (NSMutableArray *)customInterceptors {
+    if (!_customInterceptors) {
+        _customInterceptors = [NSMutableArray array];
+    }
+    return _customInterceptors;
+}
+
 - (NSString *)urlString {
     if ([self.uri hasPrefix:@"http"]) {
         return self.uri;
     }
-    NSString *domain = self.domain.length > 0 ? self.domain : LFNetworkManager.manager.config.obtainDomain;
+    NSString *domain = self.domain.length > 0 ? self.domain : [LFNetworkManager.manager.config obtainDomainWithRequest:self];
     NSAssert(domain.length > 0, @"LFRequest: domain 为空");
     return [NSString stringWithFormat:@"%@%@", domain, self.uri ?: @""];
 }

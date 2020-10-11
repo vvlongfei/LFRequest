@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface LFPresenter : NSObject<LFDataParseDelegate>
+@interface LFPresenter : NSObject
 
 @property (nonatomic, strong) LFRequest *userInfoRequest;
 

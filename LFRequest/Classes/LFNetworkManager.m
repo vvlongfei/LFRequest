@@ -102,19 +102,20 @@ static dispatch_queue_t url_session_completion_queue() {
                 [self backSuccForRequest:request result:result jsonDict:responseObject succ:succ];
             }
             if (parseError) {
-                [self backFailForRequest:request error:parseError fail:fail];
+                [self backFailForRequest:request error:parseError data:result?:responseObject
+                                    fail:fail];
             }
         } else {
             [self backFailForRequest:request error:[NSError errorWithDomain:@"数据格式有问题" code:-1 userInfo:@{
                 @"response:" : (responseObject ?: @"responseObject为nil")
-            }] fail:fail];
+            }] data:responseObject fail:fail];
         }
     };
     
     id failureBlock = ^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         @strongify(self);
         NSError *dataError = [self errorParse:error];
-        [self backFailForRequest:request error:dataError fail:fail];
+        [self backFailForRequest:request error:dataError data:nil fail:fail];
     };
     
     NSURLSessionDataTask *task = nil;
@@ -139,16 +140,16 @@ static dispatch_queue_t url_session_completion_queue() {
 }
 
 - (BOOL)interceptorForRequest:(LFRequest *)request fail:(LFNetFailBlock)fail {
-    NSError *error = nil;
-    if ([request.delegate respondsToSelector:@selector(request:interceptor:)] &&
-        [request.delegate request:request interceptor:&error]) {
-        if (fail) fail(error);
-        return YES;
+    NSError *__autoreleasing error = nil;
+    NSMutableArray *interceptors = [NSMutableArray arrayWithArray:request.interceptors];
+    if (self.config.interceptor) {
+        [interceptors addObject:self.config.interceptor];
     }
-    if ([self.config.commonRequestDelegate respondsToSelector:@selector(request:interceptor:)] &&
-        [self.config.commonRequestDelegate request:request interceptor:&error]) {
-        if (fail) fail(error);
-        return YES;
+    for (LFRequestInterceptorBlock interceptor in request.interceptors) {
+        if (interceptor(request, &error)) {
+            !fail ?: fail(error, nil);
+            return YES;
+        }
     }
     return NO;
 }
@@ -172,16 +173,14 @@ static dispatch_queue_t url_session_completion_queue() {
     }
 }
 
-- (void)backFailForRequest:(LFRequest *)request error:(NSError *)error fail:(LFNetFailBlock)fail {
+- (void)backFailForRequest:(LFRequest *)request error:(NSError *)error data:(id)data fail:(LFNetFailBlock)fail {
     
-    if ([request.delegate respondsToSelector:@selector(request:errorIntercept:)] &&
-        [request.delegate request:request errorIntercept:error]) {
+    if (request.errorInterceptor && request.errorInterceptor(request, error)) {
         // 本身错误码拦截
         return;
     }
     
-    if ([self.config.commonRequestDelegate respondsToSelector:@selector(request:errorIntercept:)] &&
-        [self.config.commonRequestDelegate request:request errorIntercept:error]) {
+    if (self.config.errorInterceptor && self.config.errorInterceptor(request, error)) {
         // 公共错误码拦截
         return;
     }
@@ -189,10 +188,10 @@ static dispatch_queue_t url_session_completion_queue() {
     if (!fail) { return; }
     
     if (request.asynBack) {
-        fail(error);
+        fail(error, data);
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            fail(error);
+            fail(error, data);
         });
     }
 }
@@ -232,7 +231,7 @@ static dispatch_queue_t url_session_completion_queue() {
     
     requestSerializer.timeoutInterval = request.requestTimeout;
     
-    NSDictionary *header = self.config.obtainHeader; // // 公共header部分
+    NSDictionary *header = [self.config obtainHeaderWithRequest:request]; // // 公共header部分
     
     [header enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
         if ([key isKindOfClass:NSString.class] && [obj isKindOfClass:NSString.class]) {
@@ -247,10 +246,10 @@ static dispatch_queue_t url_session_completion_queue() {
     if (!request.rspClass) {
         return jsonData;
     }
-    if ([request.delegate respondsToSelector:@selector(request:parseData:error:)]) {
-        return [request.delegate request:request parseData:jsonData error:error];
-    } else if ([self.config.commonRequestDelegate respondsToSelector:@selector(request:parseData:error:)]) {
-        return [self.config.commonRequestDelegate request:request parseData:jsonData error:error];
+    if (request.dataParse) {
+        return request.dataParse(request, jsonData, error);
+    } else if (self.config.dataParse) {
+        return self.config.dataParse(request, jsonData, error);
     } else {
         return [request.rspClass yy_modelWithJSON:jsonData];
     }

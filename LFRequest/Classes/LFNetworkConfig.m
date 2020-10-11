@@ -9,16 +9,16 @@
 
 @implementation LFNetworkConfig
 
-- (NSString *)obtainDomain {
+- (NSString *)obtainDomainWithRequest:(LFRequest *)request {
     if (self.domainBlock) {
-        return self.domainBlock()?:@"";
+        return self.domainBlock(request)?:@"";
     }
     return @"";
 }
 
-- (NSDictionary *)obtainHeader {
+- (NSDictionary *)obtainHeaderWithRequest:(LFRequest *)request {
     if (self.commonHeaderBlock) {
-        return self.commonHeaderBlock() ?: @{};
+        return self.commonHeaderBlock(request) ?: @{};
     }
     return @{};
 }
